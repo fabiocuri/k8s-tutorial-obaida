@@ -1,0 +1,52 @@
+# A HorizontalPodAutoscaler (HPA) automatically adjusts the number
+# of pod replicas based on observed metrics (CPU, memory, custom metrics).
+#
+# Prerequisites: metrics-server must be running in the cluster.
+#   minikube: minikube addons enable metrics-server
+#   kind:     kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: litellm-hpa
+  namespace: litellm
+spec:
+  # Which Deployment to scale
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: litellm
+
+  # Scaling bounds
+  minReplicas: 2
+  maxReplicas: 10
+
+  # Scale up when average CPU across all pods exceeds 70%
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+  # Fine-tune scaling behavior
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30   # wait 30s before scaling up again
+      policies:
+        - type: Pods
+          value: 2                     # add at most 2 pods at a time
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300  # wait 5min before scaling down
+      policies:
+        - type: Pods
+          value: 1                     # remove at most 1 pod at a time
+          periodSeconds: 60

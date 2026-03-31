@@ -1,0 +1,27 @@
+# A Service provides a stable network endpoint for a set of pods.
+# Pods are ephemeral (they get new IPs when they restart),
+# but the Service keeps a fixed DNS name and IP.
+#
+# Service types:
+#   ClusterIP    — reachable only inside the cluster (default)
+#   NodePort     — exposes on a port on every node (30000-32767)
+#   LoadBalancer — provisions an external load balancer (cloud only)
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: litellm-service
+  namespace: litellm
+spec:
+  # How the service finds its target pods (must match pod labels)
+  selector:
+    app: litellm
+
+  # NodePort so we can access it from outside the cluster
+  type: NodePort
+
+  ports:
+    - protocol: TCP
+      port: 4000         # port the Service listens on (cluster-internal)
+      targetPort: 4000    # port on the pod to forward to
+      # nodePort: 30400   # uncomment to pin a specific node port

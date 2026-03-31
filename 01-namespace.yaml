@@ -1,0 +1,10 @@
+# A Namespace is a logical boundary in Kubernetes.
+# Think of it like a folder that groups related resources together.
+# Resources in different namespaces are isolated from each other.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: litellm
+  labels:
+    purpose: tutorial

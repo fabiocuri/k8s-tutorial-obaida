@@ -1,0 +1,21 @@
+# A ConfigMap stores non-sensitive configuration data as key-value pairs.
+# Pods can consume ConfigMaps as environment variables or mounted files.
+# This one stores LiteLLM's proxy config file.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-config
+  namespace: litellm
+data:
+  # This key becomes the filename when mounted into a pod
+  config.yaml: |
+    model_list:
+      - model_name: gpt-4o
+        litellm_params:
+          model: openai/gpt-4o
+          api_key: os.environ/OPENAI_API_KEY
+      - model_name: claude-sonnet
+        litellm_params:
+          model: anthropic/claude-sonnet-4-6
+          api_key: os.environ/ANTHROPIC_API_KEY
