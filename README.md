@@ -4,8 +4,33 @@ Using [LiteLLM Proxy](https://docs.litellm.ai/docs/proxy/deploy) as a real-world
 
 ## Prerequisites
 
-- `kubectl` installed and configured
-- A running Kubernetes cluster (minikube, kind, or cloud)
+- `kubectl` installed
+- `minikube` installed ([install guide](https://minikube.sigs.k8s.io/docs/start/))
+- Docker (or another container runtime) installed and running
+
+## Starting the cluster with Minikube
+
+```bash
+# Start a local single-node Kubernetes cluster
+minikube start
+
+# Verify the cluster is running
+minikube status
+
+# kubectl should now point to your minikube cluster
+kubectl cluster-info
+
+# Enable the metrics-server addon (needed for HPA in step 6)
+minikube addons enable metrics-server
+
+# (Optional) Open the Kubernetes dashboard in your browser
+minikube dashboard
+```
+
+If you want more resources for the cluster:
+```bash
+minikube start --cpus=4 --memory=4096
+```
 
 ## Concepts covered
 
