@@ -45,33 +45,11 @@ spec:
 
           # Environment variables — pulled from our Secret
           env:
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: litellm-secrets
-                  key: OPENAI_API_KEY
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: litellm-secrets
-                  key: ANTHROPIC_API_KEY
             - name: LITELLM_MASTER_KEY
               valueFrom:
                 secretKeyRef:
                   name: litellm-secrets
                   key: LITELLM_MASTER_KEY
-
-          # Pass the config file path as a CLI argument
-          args:
-            - "--config"
-            - "/app/proxy_config.yaml"
-
-          # Mount the ConfigMap as a file inside the container
-          volumeMounts:
-            - name: config-volume
-              mountPath: /app/proxy_config.yaml
-              subPath: config.yaml
-              readOnly: true
 
           # Resource requests and limits
           # requests = guaranteed minimum (used for scheduling)
@@ -103,9 +81,3 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 15
             failureThreshold: 3
-
-      # Volumes define what's available to mount
-      volumes:
-        - name: config-volume
-          configMap:
-            name: litellm-config

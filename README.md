@@ -37,11 +37,10 @@ minikube start --cpus=4 --memory=4096
 | # | Concept | File | What it teaches |
 |---|---------|------|-----------------|
 | 1 | Namespace | `01-namespace.yaml` | Logical isolation |
-| 2 | ConfigMap | `02-configmap.yaml` | Externalizing configuration |
-| 3 | Secret | `03-secret.yaml` | Storing sensitive data |
-| 4 | Deployment | `04-deployment.yaml` | Running pods, replicas, rolling updates |
-| 5 | Service | `05-service.yaml` | Networking & exposing pods |
-| 6 | HPA | `06-hpa.yaml` | Autoscaling based on CPU/memory |
+| 2 | Secret | `02-secret.yaml` | Storing sensitive data |
+| 3 | Deployment | `03-deployment.yaml` | Running pods, replicas, rolling updates |
+| 4 | Service | `04-service.yaml` | Networking & exposing pods |
+| 5 | HPA | `05-hpa.yaml` | Autoscaling based on CPU/memory |
 
 ## Walkthrough
 
@@ -56,22 +55,10 @@ A **Namespace** is like a folder — it groups related resources and keeps them 
 
 ---
 
-### Step 2 — Create a ConfigMap
+### Step 2 — Create a Secret
 
 ```bash
-kubectl apply -f 02-configmap.yaml
-kubectl get configmap -n litellm
-kubectl describe configmap litellm-config -n litellm
-```
-
-A **ConfigMap** stores non-secret configuration (files, env vars) that pods can mount or read.
-
----
-
-### Step 3 — Create a Secret
-
-```bash
-kubectl apply -f 03-secret.yaml
+kubectl apply -f 02-secret.yaml
 kubectl get secret -n litellm
 ```
 
@@ -84,10 +71,10 @@ echo -n "my-secret-value" | base64
 
 ---
 
-### Step 4 — Create a Deployment
+### Step 3 — Create a Deployment
 
 ```bash
-kubectl apply -f 04-deployment.yaml
+kubectl apply -f 03-deployment.yaml
 ```
 
 A **Deployment** manages a set of identical pods. Key things to explore:
@@ -119,15 +106,14 @@ kubectl scale deployment litellm -n litellm --replicas=2
 - `template` — the pod blueprint (container image, ports, env vars, volumes)
 - `livenessProbe` — K8s restarts the pod if this fails
 - `readinessProbe` — K8s stops sending traffic if this fails
-- `volumeMounts` + `volumes` — how ConfigMaps/Secrets get into the container
 - `resources` — CPU/memory requests and limits
 
 ---
 
-### Step 5 — Create a Service
+### Step 4 — Create a Service
 
 ```bash
-kubectl apply -f 05-service.yaml
+kubectl apply -f 04-service.yaml
 kubectl get svc -n litellm
 ```
 
@@ -151,10 +137,10 @@ curl http://localhost:4000/health/readiness
 
 ---
 
-### Step 6 — Autoscaling with HPA
+### Step 5 — Autoscaling with HPA
 
 ```bash
-kubectl apply -f 06-hpa.yaml
+kubectl apply -f 05-hpa.yaml
 kubectl get hpa -n litellm
 ```
 
